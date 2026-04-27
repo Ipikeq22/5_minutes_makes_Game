@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5分鐘快速做遊戲：打地鼠篇 | 小朋友的程式魔法課</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B6B;
+            --primary-light: #FF8E8E;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --bg: #F7FFF7;
+            --text: #2D3436;
+            --card-bg: #FFFFFF;
+            --radius: 40px;
+            --shadow: 0 20px 50px rgba(255, 107, 107, 0.1);
+            --transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* --- Smooth Scrollbar --- */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* --- Header & Hero --- */
+        header {
+            padding: 120px 0 200px 0;
+            text-align: center;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+            color: white;
+            clip-path: ellipse(150% 100% at 50% 0%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('https://www.transparenttextures.com/patterns/cubes.png');
+            opacity: 0.1;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            line-height: 1.1;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 300;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .mascot-wrapper {
+            position: relative;
+            margin-top: -120px;
+            margin-bottom: 60px;
+            display: flex;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .mascot-img {
+            width: 320px;
+            height: auto;
+            filter: drop-shadow(0 40px 80px rgba(0,0,0,0.2));
+            animation: magicFloat 5s ease-in-out infinite;
+        }
+
+        @keyframes magicFloat {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-30px) rotate(2deg); }
+        }
+
+        /* --- Steps Layout --- */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .step-section {
+            margin-bottom: 120px;
+            opacity: 0;
+            transform: translateY(60px);
+            transition: var(--transition);
+        }
+
+        .step-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 60px;
+            box-shadow: var(--shadow);
+            border: 2px solid rgba(255, 107, 107, 0.2);
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 40px 100px rgba(255, 107, 107, 0.15);
+            border-color: rgba(255, 107, 107, 0.5);
+        }
+
+        .step-number {
+            position: absolute;
+            top: -35px;
+            left: 60px;
+            background: linear-gradient(135deg, var(--accent) 0%, #F39C12 100%);
+            width: 80px;
+            height: 80px;
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 2.2rem;
+            color: white;
+            box-shadow: 0 15px 35px rgba(243, 156, 18, 0.4);
+            transform: rotate(-12deg);
+            border: 4px solid white;
+        }
+
+        h2 {
+            font-size: 2.6rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        p {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            color: #4A4A4A;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.3fr 0.7fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .content-grid { grid-template-columns: 1fr; }
+            .hero-title { font-size: 2.8rem; }
+            .card { padding: 50px 30px; }
+            .mascot-img { width: 240px; }
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            display: inline-block;
+            padding: 20px 45px;
+            background: linear-gradient(135deg, var(--secondary) 0%, #45B39D 100%);
+            color: white !important;
+            text-decoration: none;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 15px 35px rgba(78, 205, 196, 0.3);
+            text-align: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-8px) rotate(-1deg);
+            box-shadow: 0 20px 50px rgba(78, 205, 196, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .btn-accent { 
+            background: linear-gradient(135deg, var(--accent) 0%, #E67E22 100%);
+            color: white !important; 
+            box-shadow: 0 15px 35px rgba(243, 156, 18, 0.3); 
+        }
+
+        /* --- Matrix Style Prompt Box --- */
+        .prompt-box {
+            background: #0D0208;
+            border: 2px solid #00FF41;
+            padding: 50px 40px 40px 40px;
+            border-radius: 30px;
+            position: relative;
+            margin-top: 30px;
+            box-shadow: 0 20px 60px rgba(0, 255, 65, 0.15);
+        }
+
+        .prompt-box::before {
+            content: 'MAGIC_TERMINAL >_';
+            position: absolute;
+            top: 15px;
+            left: 30px;
+            color: #00FF41;
+            font-family: 'Consolas', monospace;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            opacity: 0.7;
+        }
+
+        .prompt-text {
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 1.1rem;
+            color: #00FF41;
+            white-space: pre-wrap;
+            line-height: 1.7;
+            text-shadow: 0 0 8px rgba(0, 255, 65, 0.6);
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 0.9rem;
+            padding: 10px 22px;
+            background: transparent;
+            color: #00FF41;
+            border: 2px solid #00FF41;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            padding: 120px 0;
+            background: #1E272E;
+            color: white;
+            margin-top: 150px;
+            border-top-left-radius: 100px;
+            border-top-right-radius: 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(45deg, rgba(108, 92, 231, 0.1), transparent);
+            pointer-events: none;
+        }
+
+        .footer-mascot {
+            font-size: 3.5rem;
+            margin-bottom: 30px;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1 class="hero-title">5分鐘快速做遊戲！</h1>
+            <p class="hero-subtitle">讓 AI 成為你的程式魔法棒，創造出屬於自己的 6x6 打地鼠遊戲</p>
+        </div>
+    </header>
+
+    <div class="mascot-wrapper">
+        <img src="mascot.png" alt="Magic Mascot" class="mascot-img">
+    </div>
+
+    <div class="container">
+        <!-- Step 1 -->
+        <section class="step-section" id="step1">
+            <div class="card">
+                <div class="step-number">1</div>
+                <h2>🎨 下載你的角色</h2>
+                <div class="content-grid">
+                    <div>
+                        <p>首先，我們需要一位地鼠主角和一個漂亮的背景。點擊下方按鈕，把老師準備好的素材存到電腦裡吧！</p>
+                        <br>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <a href="素材/正.png" download="正.png" class="btn">下載主角</a>
+                            <a href="素材/反.jpg" download="反.jpg" class="btn">下載反派</a>
+                            <a href="素材/bg.jpg" download="bg.jpg" class="btn btn-accent">下載背景</a>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3133/3133129.png" style="width: 150px; opacity: 0.8;" alt="Assets">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 2 -->
+        <section class="step-section" id="step2">
+            <div class="card">
+                <div class="step-number">2</div>
+                <h2>🤖 AI 視覺大變身</h2>
+                <div class="content-grid">
+                    <div style="order: 2;">
+                        <p>讓 AI 幫你優化角色圖，讓它看起來更酷！</p>
+                        <ol style="margin-left: 20px; font-size: 1.1rem;">
+                            <li>開啟 <strong>Gemini</strong>，對它說：「幫我優化這張角色圖！」</li>
+                            <li>使用 <strong>Remove.bg</strong> 把背景變透明。</li>
+                        </ol>
+                        <br>
+                        <a href="https://www.remove.bg/zh" target="_blank" class="btn btn-accent">前往去去背</a>
+                    </div>
+                    <div style="text-align: center; order: 1;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2103/2103633.png" style="width: 150px;" alt="AI">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 3 -->
+        <section class="step-section" id="step3">
+            <div class="card">
+                <div class="step-number">3</div>
+                <h2>🎵 讓遊戲動起來</h2>
+                <div class="content-grid">
+                    <div>
+                        <p>沒有音樂的遊戲太安靜了！點擊下方按鈕下載音效：</p>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; margin-bottom: 20px;">
+                            <a href="素材/正向音效.mp3" download="正向音效.mp3" class="btn" style="background: #4ECDC4;">正向音效</a>
+                            <a href="素材/反派音效.mp3" download="反派音效.mp3" class="btn" style="background: #FF6B6B;">反派音效</a>
+                        </div>
+                        <p style="font-size: 1rem; margin-bottom: 10px;">💡 你也可以使用 Suno 生成背景音樂：</p>
+                        <div class="prompt-box">
+                            <button class="btn copy-btn" onclick="copyText('suno-prompt')">複製 Suno 提示詞</button>
+                            <div class="prompt-text" id="suno-prompt">Upbeat, playful, bouncy electronic music for kids game, 8-bit style, joyful melody.</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2995/2995101.png" style="width: 150px;" alt="Music">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 4 -->
+        <section class="step-section" id="step4">
+            <div class="card">
+                <div class="step-number">4</div>
+                <h2>💻 程式魔術師</h2>
+                <p>現在是最神奇的部分！開啟 <strong>VS Code</strong>，新建一個資料夾，然後跟著 <strong>GitHub Copilot</strong> 這樣做：</p>
+                <div class="prompt-box">
+                    <button class="btn copy-btn" onclick="copyText('copilot-prompt')">複製完整指令</button>
+                    <div class="prompt-text" id="copilot-prompt">請幫我撰寫一個「高品質、現代感」的全螢幕 6x6 打地鼠遊戲。
+目標是打造一個視覺驚艷、且在任何螢幕下都「不會超出範圍」的網頁應用。
+
+【遊戲流程要求 - 重要！】
+- **開始畫面**：遊戲啟動時，必須先顯示一個「開始畫面」遮罩，包含遊戲標題與一個美觀的「開始遊戲」按鈕。
+- **點擊開始**：只有在點擊按鈕後，計時器才會開始倒數，且角色才會開始出現。
+- **結束畫面**：時間到時，顯示最終分數與「再玩一次」按鈕。
+
+【核心技術要求】
+- 使用單一 HTML 檔案。
+- **網格尺寸控制**：網格容器寬高設定為 `85vmin`，確保永遠是正方形且契合螢幕。
+- **佈局居中**：使用 Flexbox 或 Grid 將容器在畫面上完美居中。
+- **禁止捲軸**：CSS 設定 `body { overflow: hidden; }`。
+
+【功能規格】
+1. 視覺風格：深色背景搭配毛玻璃 (Glassmorphism) 效果。
+2. HUD 介面：左上角顯示分數板，右上角顯示 60 秒倒數。
+3. 核心邏輯：隨機閃現角色（正向得 10 分，反派扣 20 分），點擊後需有「浮動分數文字」特效。
+4. 支援背景音樂播放與點擊音效。
+
+【變數設定】
+正派圖片位置: 
+反派圖片位置: 
+背景圖片位置: 
+bgm位置:
+點到正派音效位置:
+點到反派音效位置:
+
+請包含詳細中文註解。</div>
+                </div>
+                <div style="margin-top: 25px; text-align: center;">
+                    <a href="game.html" target="_blank" class="btn btn-accent" style="padding: 15px 40px; font-size: 1.1rem;">✨ 查看預期成果範例 ✨</a>
+                </div>
+                <p style="margin-top: 15px; font-size: 0.9rem; color: #666;">💡 貼上後按下 Enter，見證奇蹟發生！</p>
+            </div>
+        </section>
+
+        <!-- Step 5 -->
+        <section class="step-section" id="step5">
+            <div class="card">
+                <div class="step-number">5</div>
+                <h2>🧪 測試與除錯</h2>
+                <div class="content-grid">
+                    <div>
+                        <p>按下 <strong>F5</strong> 開啟遊戲進行測試吧！</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1541/1541402.png" style="width: 140px; opacity: 0.9;" alt="Test">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 6 (Premium Unlock) -->
+        <section class="step-section" id="step6">
+            <div class="card" style="border: 2px solid var(--accent); background: linear-gradient(180deg, #FFFFFF 0%, #FFFDF5 100%);">
+                <div class="step-number" style="background: var(--primary); color: white;">6</div>
+                <div style="display: inline-block; background: var(--accent); padding: 4px 12px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; margin-bottom: 10px;">🌟 付費解鎖項目</div>
+                <h2>🚀 發布到 GitHub Page</h2>
+                <div class="content-grid">
+                    <div>
+                        <p>最後，把程式碼發布，分享給朋友玩！</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1039/1039328.png" style="width: 120px;" alt="Launch">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <span class="footer-mascot">🚀</span>
+            <h3 style="font-size: 1.8rem; margin-bottom: 10px;">跟著 Gary 老師一起玩創意！</h3>
+            <p style="opacity: 0.8; margin-bottom: 30px;">讓程式不再只是代碼，而是實現夢想的魔法棒。</p>
+            <a href="https://ipikeq22.github.io/Portfolio-Website/" target="_blank" class="btn btn-accent">查看 Gary 老師的作品集</a>
+            <p style="margin-top: 40px; font-size: 0.9rem; opacity: 0.5;">© 2026 5分鐘快速做遊戲教學 - 讓每個孩子都是創造者</p>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll Animation
+        const sections = document.querySelectorAll('.step-section');
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+        // Copy Function
+        function copyText(id) {
+            const text = document.getElementById(id).innerText;
+            const btn = event.currentTarget;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.innerText;
+                btn.innerText = 'SUCCESS! 🚀';
+                btn.style.background = '#00FF41';
+                btn.style.color = '#0D0208';
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.background = '';
+                    btn.style.color = '';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
