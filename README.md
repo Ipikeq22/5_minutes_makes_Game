@@ -15,11 +15,7 @@
 - **AI Tools**: GitHub Copilot (Code Generation), Gemini (Image Optimization), Suno (BGM Generation)
 - **Deployment**: GitHub Pages
 
-## 📖 如何開始 (How to start)
 
-1. 開啟 [教學網頁](https://ipikeq22.github.io/5-Min-Game-Maker/) (請替換為你的實際網址)。
-2. 跟隨網站上的 5 個步驟進行素材下載與 AI 指令複製。
-3. 在 VS Code 中貼上代碼，見證奇蹟發生！
 
 ## 👤 關於作者 (About Author)
 
